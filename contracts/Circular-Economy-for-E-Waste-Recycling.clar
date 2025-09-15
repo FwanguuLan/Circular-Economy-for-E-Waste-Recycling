@@ -94,8 +94,9 @@
 (define-public (transfer-product (product-id uint) (new-owner principal))
   (let ((product (unwrap! (map-get? products product-id) err-not-found)))
     (asserts! (is-eq (get current-owner product) tx-sender) err-unauthorized)
+    (asserts! (not (is-eq (get status product) "recalled")) err-unauthorized)
     (try! (nft-transfer? product-passport product-id tx-sender new-owner))
-    (map-set products product-id 
+    (map-set products product-id
       (merge product {
         current-owner: new-owner,
         status: "transferred"
@@ -164,6 +165,15 @@
     (asserts! (is-eq (get status product) "recycled") err-invalid-status)
     (try! (nft-burn? product-passport product-id tx-sender))
     (map-delete products product-id)
+    (ok true)
+  )
+)
+
+(define-public (recall-product (product-id uint))
+  (let ((product (unwrap! (map-get? products product-id) err-not-found)))
+    (asserts! (is-eq (get manufacturer product) tx-sender) err-unauthorized)
+    (asserts! (not (is-eq (get status product) "recalled")) err-invalid-status)
+    (map-set products product-id (merge product {status: "recalled"}))
     (ok true)
   )
 )
