@@ -5,6 +5,7 @@
 (define-constant err-unauthorized (err u103))
 (define-constant err-invalid-status (err u104))
 (define-constant err-insufficient-balance (err u105))
+(define-constant err-invalid-rating (err u106))
 
 (define-fungible-token eco-token)
 
@@ -39,6 +40,10 @@
 )
 
 (define-map user-balances principal uint)
+
+(define-map product-ratings uint {rating: uint, rated-by: principal})
+
+(define-map recycler-ratings principal {total-ratings: uint, sum-ratings: uint})
 
 (define-public (register-recycler (name (string-ascii 100)) (license-number (string-ascii 50)) (certification-level uint))
   (let ((caller tx-sender))
@@ -187,6 +192,27 @@
   )
 )
 
+(define-public (rate-recycler (product-id uint) (rating uint))
+  (begin
+    (asserts! (and (>= rating u1) (<= rating u5)) err-invalid-rating)
+    (let ((product (unwrap! (map-get? products product-id) err-not-found)))
+      (asserts! (is-eq (get current-owner product) tx-sender) err-unauthorized)
+      (asserts! (is-eq (get status product) "recycled") err-invalid-status)
+      (let ((recycler (unwrap! (get recycler product) err-not-found)))
+        (asserts! (is-none (map-get? product-ratings product-id)) err-already-exists)
+        (map-set product-ratings product-id {rating: rating, rated-by: tx-sender})
+        (let ((current-rating (default-to {total-ratings: u0, sum-ratings: u0} (map-get? recycler-ratings recycler))))
+          (map-set recycler-ratings recycler {
+            total-ratings: (+ (get total-ratings current-rating) u1),
+            sum-ratings: (+ (get sum-ratings current-rating) rating)
+          })
+        )
+        (ok true)
+      )
+    )
+  )
+)
+
 (define-public (set-recycling-reward (new-reward uint))
   (begin
     (asserts! (is-eq tx-sender contract-owner) err-owner-only)
@@ -236,6 +262,16 @@
 
 (define-read-only (get-products-by-status (status (string-ascii 20)))
   (ok status)
+)
+
+(define-read-only (get-recycler-average-rating (recycler principal))
+  (match (map-get? recycler-ratings recycler)
+    rating-data (if (> (get total-ratings rating-data) u0)
+      (/ (get sum-ratings rating-data) (get total-ratings rating-data))
+      u0
+    )
+    u0
+  )
 )
 
 (define-read-only (calculate-recycling-incentive (certification-level uint) (base-reward uint))

@@ -5,10 +5,11 @@ A blockchain-based platform for tracking electronics lifecycle from production t
 ## ✨ Features
 
 - 📱 **NFT Product Passports**: Unique digital identity for every electronic device
-- 🏭 **Verified Recycler Registry**: Certified recyclers with verification system  
+- 🏭 **Verified Recycler Registry**: Certified recyclers with verification system
 - 🪙 **Recycling Incentives**: Earn eco-tokens for proper e-waste disposal
 - 📊 **Lifecycle Tracking**: Complete traceability from production to recycling
 - 🔒 **Secure & Transparent**: Blockchain-based immutable records
+- ⭐ **Recycler Rating System**: Community feedback for recyclers
 
 ## 🚀 Quick Start
 
@@ -47,9 +48,16 @@ Transfer ownership:
 
 Update device status:
 ```clarity
-(contract-call? .circular-economy-for-e-waste-recycling update-product-status 
-  u1 
+(contract-call? .circular-economy-for-e-waste-recycling update-product-status
+  u1
   "end-of-life")
+```
+
+Rate recycler after recycling:
+```clarity
+(contract-call? .circular-economy-for-e-waste-recycling rate-recycler
+  u1
+  u5)
 ```
 
 ### For Recyclers
@@ -80,6 +88,7 @@ Complete recycling process:
 | `update-product-status` | Update device lifecycle status |
 | `initiate-recycling` | Start recycling process |
 | `complete-recycling` | Finish recycling & earn rewards |
+| `rate-recycler` | Rate recycler after recycling |
 | `set-recycling-reward` | Update reward amount (owner only) |
 
 ### Read-Only Functions
@@ -89,6 +98,7 @@ Complete recycling process:
 | `get-product-info` | Get device details |
 | `get-recycler-info` | Get recycler details |
 | `get-user-balance` | Check eco-token balance |
+| `get-recycler-average-rating` | Get recycler's average rating |
 | `is-verified-recycler` | Check recycler verification |
 
 ## 💰 Token Economics
