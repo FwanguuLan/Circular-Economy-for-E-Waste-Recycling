@@ -10,6 +10,7 @@ A blockchain-based platform for tracking electronics lifecycle from production t
 - 📊 **Lifecycle Tracking**: Complete traceability from production to recycling
 - 🔒 **Secure & Transparent**: Blockchain-based immutable records
 - ⭐ **Recycler Rating System**: Community feedback for recyclers
+- 🛡️ **Warranty Management**: Automated warranty tracking and claims for defective products
 
 ## 🚀 Quick Start
 
@@ -31,10 +32,11 @@ clarinet check
 
 Create product passport for new device:
 ```clarity
-(contract-call? .circular-economy-for-e-waste-recycling create-product-passport 
-  "smartphone" 
-  "ABC123XYZ789" 
-  u1640995200)
+(contract-call? .circular-economy-for-e-waste-recycling create-product-passport
+  "smartphone"
+  "ABC123XYZ789"
+  u1640995200
+  u31536000)
 ```
 
 ### For Device Owners
@@ -90,6 +92,8 @@ Complete recycling process:
 | `complete-recycling` | Finish recycling & earn rewards |
 | `rate-recycler` | Rate recycler after recycling |
 | `set-recycling-reward` | Update reward amount (owner only) |
+| `claim-warranty` | Claim warranty for defective product |
+| `extend-warranty` | Extend warranty period (manufacturer only) |
 
 ### Read-Only Functions
 
@@ -100,6 +104,8 @@ Complete recycling process:
 | `get-user-balance` | Check eco-token balance |
 | `get-recycler-average-rating` | Get recycler's average rating |
 | `is-verified-recycler` | Check recycler verification |
+| `is-under-warranty` | Check if product is under warranty |
+| `get-warranty-end-date` | Get product warranty end date |
 
 ## 💰 Token Economics
 
@@ -123,6 +129,18 @@ clarinet test
 
 ## 🤝 Contributing
 
+## 🛡️ Warranty Management
+
+- 🔍 **Automated Tracking**: Blockchain-verified warranty periods for all products
+- 📞 **Easy Claims**: Simple warranty claims for defective products within coverage
+- ⏰ **Extension Support**: Manufacturers can extend warranty periods as needed
+- ✅ **Status Verification**: Real-time warranty status checks for consumers
+
+### Warranty Lifecycle
+
+1. **Active** - Product under warranty coverage
+2. **Expired** - Warranty period has ended
+3. **Claimed** - Warranty successfully claimed for defective product
 1. Fork the repository
 2. Create feature branch
 3. Submit pull request

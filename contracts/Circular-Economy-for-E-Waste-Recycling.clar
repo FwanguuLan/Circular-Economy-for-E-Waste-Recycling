@@ -14,8 +14,8 @@
 (define-data-var next-product-id uint u1)
 (define-data-var recycling-reward uint u100)
 
-(define-map products 
-  uint 
+(define-map products
+  uint
   {
     manufacturer: principal,
     device-type: (string-ascii 50),
@@ -23,7 +23,8 @@
     production-date: uint,
     status: (string-ascii 20),
     current-owner: principal,
-    recycler: (optional principal)
+    recycler: (optional principal),
+    warranty-end-date: uint
   }
 )
 
@@ -71,10 +72,11 @@
   )
 )
 
-(define-public (create-product-passport 
-  (device-type (string-ascii 50)) 
+(define-public (create-product-passport
+  (device-type (string-ascii 50))
   (serial-number (string-ascii 100))
   (production-date uint)
+  (warranty-period uint)
 )
   (let 
     (
@@ -89,7 +91,8 @@
       production-date: production-date,
       status: "produced",
       current-owner: manufacturer,
-      recycler: none
+      recycler: none,
+      warranty-end-date: (+ production-date warranty-period)
     })
     (var-set next-product-id (+ product-id u1))
     (ok product-id)
@@ -278,5 +281,38 @@
   (if (>= certification-level u3)
     (* base-reward u2)
     base-reward
+  )
+)
+
+(define-public (claim-warranty (product-id uint))
+  (let ((product (unwrap! (map-get? products product-id) err-not-found)))
+    (asserts! (is-eq (get current-owner product) tx-sender) err-unauthorized)
+    (asserts! (> (get warranty-end-date product) stacks-block-height) err-unauthorized)
+    (asserts! (is-eq (get status product) "defective") err-invalid-status)
+    (map-set products product-id (merge product {status: "warranty-claimed"}))
+    (ok true)
+  )
+)
+
+(define-public (extend-warranty (product-id uint) (extension-period uint))
+  (let ((product (unwrap! (map-get? products product-id) err-not-found)))
+    (asserts! (is-eq (get manufacturer product) tx-sender) err-unauthorized)
+    (asserts! (> (get warranty-end-date product) stacks-block-height) err-unauthorized)
+    (map-set products product-id (merge product {warranty-end-date: (+ (get warranty-end-date product) extension-period)}))
+    (ok true)
+  )
+)
+
+(define-read-only (is-under-warranty (product-id uint))
+  (match (map-get? products product-id)
+    product (> (get warranty-end-date product) stacks-block-height)
+    false
+  )
+)
+
+(define-read-only (get-warranty-end-date (product-id uint))
+  (match (map-get? products product-id)
+    product (get warranty-end-date product)
+    u0
   )
 )
