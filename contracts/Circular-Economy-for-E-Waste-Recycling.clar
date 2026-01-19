@@ -316,3 +316,19 @@
     u0
   )
 )
+
+(define-public (batch-transfer-products (product-ids (list 10 uint)) (new-owner principal))
+  (begin
+    (if (> (len product-ids) u0) (try! (transfer-product (unwrap-panic (element-at product-ids u0)) new-owner)) true)
+    (if (> (len product-ids) u1) (try! (transfer-product (unwrap-panic (element-at product-ids u1)) new-owner)) true)
+    (if (> (len product-ids) u2) (try! (transfer-product (unwrap-panic (element-at product-ids u2)) new-owner)) true)
+    (if (> (len product-ids) u3) (try! (transfer-product (unwrap-panic (element-at product-ids u3)) new-owner)) true)
+    (if (> (len product-ids) u4) (try! (transfer-product (unwrap-panic (element-at product-ids u4)) new-owner)) true)
+    (if (> (len product-ids) u5) (try! (transfer-product (unwrap-panic (element-at product-ids u5)) new-owner)) true)
+    (if (> (len product-ids) u6) (try! (transfer-product (unwrap-panic (element-at product-ids u6)) new-owner)) true)
+    (if (> (len product-ids) u7) (try! (transfer-product (unwrap-panic (element-at product-ids u7)) new-owner)) true)
+    (if (> (len product-ids) u8) (try! (transfer-product (unwrap-panic (element-at product-ids u8)) new-owner)) true)
+    (if (> (len product-ids) u9) (try! (transfer-product (unwrap-panic (element-at product-ids u9)) new-owner)) true)
+    (ok true)
+  )
+)

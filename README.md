@@ -148,3 +148,24 @@ clarinet test
 ## 📄 License
 
 MIT License - see LICENSE file for details
+
+## 📦 Batch Product Transfer
+
+- 🚀 **Streamlined Operations**: Transfer up to 10 products to a new owner in a single transaction, reducing costs and improving efficiency for bulk transfers.
+- 🔄 **Seamless Integration**: Leverages existing transfer logic to ensure consistency and security.
+- 💡 **User-Friendly**: Simplifies management for manufacturers and owners handling multiple devices.
+
+### Usage Example
+
+Transfer multiple products:
+```clarity
+(contract-call? .circular-economy-for-e-waste-recycling batch-transfer-products
+  (list u1 u2 u3)
+  'SP2USER...)
+```
+
+### Contract Function
+
+| Function | Description |
+|----------|-------------|
+| `batch-transfer-products` | Transfer multiple products to a new owner in one transaction |
